@@ -1,0 +1,214 @@
+*{
+    margin: 0;
+    border: 0;
+    padding: 0%;
+}
+
+ body {
+   margin: 0;
+   height: 100vh;
+   background: #f5f6fa;
+}
+
+.container{
+    width: 100%;
+    height: 8%;
+}
+
+.navbar{
+    background: linear-gradient(to right, #3F704D , #679267) ;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.links{
+    width: 30%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.link{
+    text-decoration: none;
+    color:#F0FFF0;
+    font-size: large;
+    font-family: serif;
+}
+
+.link:hover{
+    color: #F0FFF0;
+}
+
+.logo{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #3F704D;
+    height: 100%;
+    font-family: serif;
+}
+
+.image{
+    height: 50%;
+}
+
+.credflow{
+    font-size: 30px;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #F0FFF0;
+    font-family:serif;
+    
+}
+
+.container2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.add{
+    color: white;
+    background-color: #679267;
+    width: 20%;
+    height:40px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-decoration: none;
+}
+
+.add button{
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: large;
+}
+
+.despesa{
+    color: white;
+    background-color: #679267;
+    width: 20%;
+    height:40px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    margin-top: 25px;
+}
+
+.cards {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.card .value {
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.value.green { color: #1db954; }
+.value.red { color: #e63946; }
+.value.blue { color: #1e90ff; }
+
+.section {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+.box {
+    background: white;
+    flex: 1;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.inside{
+    width:100%;
+    height:250px;
+    background:#eef1f5;
+    border-radius:10px;
+}
+
+.transactions {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    background: white;
+    margin-top: 30px;
+    padding: 10px;         
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.transactions h3 {
+    margin-bottom: 20px;    
+}
+
+.transaction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.t-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.circle.red { background: #e63946; }
+.circle.green { background: #1db954; }
+
+.tag {
+    font-size: 12px;
+    color: #777;
+}
+
+.amount.red { color: #e63946; }
+.amount.green { color: #1db954; }
+
+.btn {
+    margin-left: 20px;
+    background: #679267;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    float: right;
+}

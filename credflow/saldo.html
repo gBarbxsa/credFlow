@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="saldo.css">
+</head>
+<body>
+    <div class="container">
+            <nav class="navbar">
+            <div class="logo">
+                <img src="assets/logov2.png" class="image" alt="">
+                <h1 href="" class="credflow">CredFlow</h1>
+            </div>
+            <div class="links">
+                 <a href="" class="link">Fale conosco</a>
+                 <a href="" class="link">Sobre nós</a>
+                 <a href="" class="link">Recursos</a>
+                 <a href="" class="link">Blog</a>
+            </div>
+        </nav>
+    </div>
+    <div class="container2">
+     <div class="cards">
+            <div class="card">
+                <h3>Entradas</h3>
+                <div class="value green" id="entrada"></div>
+            </div>
+            <div class="card">
+                <h3>Saídas</h3>
+                <div class="value red" id="saida"></div>
+            </div>
+            <div class="card">
+                <h3>Saldo Atual</h3>
+                <div class="value blue" id="total"></div>
+            </div>
+        </div>
+    <div class="container3">
+        <div class="saldo">
+            <div class="box">
+            <h1>Entrada</h1>
+            <label for="">insira o valor de entrada:</label>
+            <input type="number" id="valorent">
+            <label for="">insira o nome da entrada:</label>
+            <input type="text" id="nomeent">
+            <button class="confirm" id="confirm">Confirmar</button>
+            </div>   
+            <div class="box">
+            <h1>Saida</h1>
+            <label for="">insira o valor de Saida:</label>
+            <input type="number" id="valorsaid">
+            <label for="">insira o nome da Saida:</label>
+            <input type="text" id="nomesaid">
+            <button class="confirm" id="confirmsaid">Confirmar</button>
+            </div>
+        </div>
+    </div>
+        <div class="entradas">
+            <div class="titulos">
+            <h3>Nome</h3>
+            <h3>Valor</h3>
+            </div>
+            <div class="valores">
+                <ul id="listaitens">
+                    <li class="itemlista">
+                        <div class="valor">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="saldo.js"></script>
+</body>
+</html>
