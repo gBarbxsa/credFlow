@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CredFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <nav class="navbar dashboard-nav">
+        <div class="logo">
+            <img src="assets/logov2.png" alt="CredFlow Logo" style="height: 40px;">
+            <h1 class="credflow">CredFlow</h1>
+        </div>
+
+        <div class="links">
+            <a href="index.html" class="link">Início</a>
+            <a href="index.html#about" class="link">Sobre</a>
+            <a href="index.html#contact" class="link">Contato</a>
+        </div>
+
+        <div class="user-menu">
+            <span>Olá, Usuário</span>
+            <a href="index.html" class="logout"> Sair</a>
+        </div>
+    </nav>
+
+    <!-- Conteudo principal -->
+    <main class="dashboard-container">
+
+        <!-- Resumo -->
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Entradas</h3>
+                <div id="totalEntradas" class="value green">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Saídas</h3>
+                <div id="totalSaidas" class="value red">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Saldo Atual</h3>
+                <div id="saldoAtual" class="value blue">R$ 0,00</div>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="dashboard-grid">
+
+            <!-- Gráfico -->
+            <div class="chart-section card">
+                <h3>Fluxo de Caixa (6 meses)</h3>
+                <div class="chart-container">
+                    <canvas id="cashFlowChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Transacoes -->
+            <div class="transactions-section card">
+                <div class="section-header">
+                    <h3>Últimas Transações</h3>
+                    <button onclick="openModal()" class="btn-primary">+ Nova Transação</button>
+                </div>
+
+                <div id="transactionsList" class="transactions-list">
+                    <!-- Estado vazio -->
+                    <div id="emptyState" class="empty-state">
+                        <p>Nenhuma transação registrada ainda.</p>
+                        <button onclick="openModal()" class="link-action"
+                            style="background:none; border:none; cursor:pointer;">Começar agora</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal de Transacao -->
+    <div id="transactionModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Transação</h2>
+                <button onclick="closeModal()" class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <label class="input-label">Tipo de Movimentação</label>
+                <div class="type-toggle">
+                    <button class="type-btn active" id="btn-saida" onclick="setTransactionType('saida')">Saída /
+                        Despesa</button>
+                    <button class="type-btn" id="btn-entrada" onclick="setTransactionType('entrada')">Entrada /
+                        Receita</button>
+                </div>
+
+                <label class="input-label">Descrição</label>
+                <input type="text" id="descInput" class="modal-input" placeholder="Ex: Aluguel, Salário, Mercado...">
+
+                <label class="input-label">Valor (R$)</label>
+                <input type="number" id="valueInput" class="modal-input" placeholder="0,00">
+
+                <label class="input-label">Categoria</label>
+                <select id="categoryInput" class="modal-input">
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="moradia">Moradia</option>
+                    <option value="alimentacao">Alimentação</option>
+                    <option value="transporte">Transporte</option>
+                    <option value="lazer">Lazer</option>
+                    <option value="saude">Saúde</option>
+                    <option value="salario">Salário</option>
+                    <option value="outros">Outros</option>
+                </select>
+
+                <button class="submit-btn" id="submit-btn" onclick="addTransaction()">Confirmar
+                    Despesa</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script src="navbar.js"></script>
+</body>
+
+</html>

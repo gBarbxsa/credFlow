@@ -1,0 +1,18 @@
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Transactions (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    Description NVARCHAR(255) NOT NULL,
+    Value DECIMAL(18, 2) NOT NULL,
+    Type NVARCHAR(20) NOT NULL, -- 'entrada' or 'saida'
+    Category NVARCHAR(50) NOT NULL,
+    Date DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
