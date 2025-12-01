@@ -117,7 +117,7 @@ app.get('/api/transactions', authenticateToken, async (req, res) => {
 
         const result = await pool.request()
             .input('UserId', sql.Int, req.user.id)
-            .query('SELECT * FROM Transactions WHERE UserId = @UserId ORDER BY Date DESC');
+            .query('SELECT * FROM Transactions WHERE UserId = @UserId ORDER BY Date ASC');
 
         res.json(result.recordset);
     } catch (err) {
