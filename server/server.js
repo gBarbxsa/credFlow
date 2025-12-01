@@ -1,11 +1,12 @@
 const express = require('express');
-const sql = require('mssql');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 require('dotenv').config();
 
-const path = require('path');
+// Importa a nossa nova conexão segura do arquivo db.js
+const { sql, poolPromise } = require('./db');
 
 const app = express();
 
@@ -13,29 +14,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../credflow')));
-
-// Database Configuration
-const dbConfig = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: process.env.DB_NAME,
-    options: {
-        encrypt: true, // Use this if you're on Windows Azure
-        trustServerCertificate: false // Change to true for local dev / self-signed certs
-    }
-};
-
-// Connect to Database
-async function connectDB() {
-    try {
-        await sql.connect(dbConfig);
-        console.log('Connected to Azure SQL Database');
-    } catch (err) {
-        console.error('Database connection failed:', err);
-    }
-}
-connectDB();
 
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
@@ -58,35 +36,41 @@ app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // Basic Validation
         if (!name || !email || !password) {
             return res.status(400).json({ message: 'Please fill in all fields' });
         }
 
-        // Email Format Validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: 'Invalid email format' });
         }
 
-        // Password Complexity Validation
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         if (!passwordRegex.test(password)) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number' });
+            return res.status(400).json({ message: 'Password must be at least 8 characters long...' });
         }
 
-        // Check if user exists
-        const checkUser = await sql.query`SELECT * FROM Users WHERE Email = ${email}`;
+        // 1. Obtém o pool de conexões (garante que está conectado)
+        const pool = await poolPromise;
+
+        // 2. Verifica se usuário existe
+        const checkUser = await pool.request()
+            .input('Email', sql.VarChar, email)
+            .query('SELECT * FROM Users WHERE Email = @Email');
+
         if (checkUser.recordset.length > 0) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Insert user
-        await sql.query`INSERT INTO Users (Name, Email, PasswordHash) VALUES (${name}, ${email}, ${hashedPassword})`;
+        // 3. Insere o usuário
+        await pool.request()
+            .input('Name', sql.VarChar, name)
+            .input('Email', sql.VarChar, email)
+            .input('PasswordHash', sql.VarChar, hashedPassword)
+            .query('INSERT INTO Users (Name, Email, PasswordHash) VALUES (@Name, @Email, @PasswordHash)');
 
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
@@ -100,21 +84,23 @@ app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Find user
-        const result = await sql.query`SELECT * FROM Users WHERE Email = ${email}`;
+        const pool = await poolPromise; // Espera o pool
+
+        const result = await pool.request()
+            .input('Email', sql.VarChar, email)
+            .query('SELECT * FROM Users WHERE Email = @Email');
+            
         const user = result.recordset[0];
 
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Check password
         const validPassword = await bcrypt.compare(password, user.PasswordHash);
         if (!validPassword) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Create token
         const token = jwt.sign({ id: user.Id, name: user.Name }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ token, user: { id: user.Id, name: user.Name, email: user.Email } });
@@ -124,10 +110,15 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Get Transactions
+// Get Transacao
 app.get('/api/transactions', authenticateToken, async (req, res) => {
     try {
-        const result = await sql.query`SELECT * FROM Transactions WHERE UserId = ${req.user.id} ORDER BY Date DESC`;
+        const pool = await poolPromise;
+
+        const result = await pool.request()
+            .input('UserId', sql.Int, req.user.id)
+            .query('SELECT * FROM Transactions WHERE UserId = @UserId ORDER BY Date DESC');
+
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
@@ -135,13 +126,20 @@ app.get('/api/transactions', authenticateToken, async (req, res) => {
     }
 });
 
-// Add Transaction
+// Adicionar Transacao
 app.post('/api/transactions', authenticateToken, async (req, res) => {
     try {
         const { description, value, type, category } = req.body;
 
-        await sql.query`INSERT INTO Transactions (UserId, Description, Value, Type, Category, Date) 
-                        VALUES (${req.user.id}, ${description}, ${value}, ${type}, ${category}, GETDATE())`;
+        const pool = await poolPromise;
+
+        await pool.request()
+            .input('UserId', sql.Int, req.user.id)
+            .input('Description', sql.NVarChar(255), description) 
+            .input('Value', sql.Decimal(18, 2), value) 
+            .input('Type', sql.NVarChar(20), type)
+            .input('Category', sql.NVarChar(50), category)
+            .query('INSERT INTO Transactions (UserId, Description, Value, Type, Category, Date) VALUES (@UserId, @Description, @Value, @Type, @Category, GETDATE())');
 
         res.status(201).json({ message: 'Transaction added' });
     } catch (err) {
@@ -150,13 +148,17 @@ app.post('/api/transactions', authenticateToken, async (req, res) => {
     }
 });
 
-// Delete Transaction
+// Apagar Transacao
 app.delete('/api/transactions/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
+        
+        const pool = await poolPromise;
 
-        // Verify ownership and delete
-        const result = await sql.query`DELETE FROM Transactions WHERE Id = ${id} AND UserId = ${req.user.id}`;
+        const result = await pool.request()
+            .input('Id', sql.Int, id)
+            .input('UserId', sql.Int, req.user.id)
+            .query('DELETE FROM Transactions WHERE Id = @Id AND UserId = @UserId');
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ message: 'Transaction not found or unauthorized' });
