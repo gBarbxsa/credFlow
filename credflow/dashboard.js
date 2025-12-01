@@ -4,7 +4,7 @@
 let transactions = [];
 let currentType = 'saida';
 let cashFlowChart;
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 // DOM Elements
 const modal = document.getElementById('transactionModal');
@@ -269,7 +269,7 @@ function updateSummary() {
     // Atualizacao cor do saldo 
     saldoAtualEl.className = `value ${saldo >= 0 ? 'blue' : 'red'}`;
 
-    return saldo; 
+    return saldo;
 }
 
 // Funcoes auxiliares

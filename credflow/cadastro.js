@@ -9,7 +9,7 @@ const erroemail = document.getElementById("erroemail");
 const errosenha = document.getElementById("errosenha");
 const erroconfirma = document.getElementById("erroconfirma");
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
